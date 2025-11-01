@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HumindAI - Expert Digital Interface</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Poppins (Header) and Inter (Body) for professional typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght[700,900]&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Colors and Fonts */
+        :root {
+            --bg-dark: #1A1A1A; /* Deep Dark Gray - Main Background */
+            --accent-cyan: #00BFFF; /* Digital Cyan - High-contrast, professional tech color */
+            --matrix-red: #DC2626; /* Bright Red - The "Red Pill" */
+            --text-light: #F2F2F2; /* Cool Light Gray for main text */
+            --text-secondary: #AAAAAA; /* Gray for subtle text */
+        }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+
+        /* General Body and Container Styling */
+        body {
+            background-color: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text-light);
+            padding-top: 6rem; /* Space for fixed navbar */
+            overflow-x: hidden; /* Prevent horizontal scroll on resize */
+        }
+
+        /* Futuristic Brain/Data Connection Background Effect (Organic Digital Flow) */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+            /* New: Radial glow for subtle depth, combining cyan and a hint of red */
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.05) 0%, rgba(26, 26, 26, 0) 60%),
+                radial-gradient(circle at 10% 90%, rgba(220, 38, 38, 0.03) 0%, rgba(26, 26, 26, 0) 50%),
+                var(--bg-dark); 
+            opacity: 1; /* Opacity 1 because the gradients are very faint */
+        }
+        
+        /* Subtle, slow-moving 'data' overlay pattern */
+        .matrix-bg::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            /* Subtle noise/branching pattern using repeating gradient */
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(0, 191, 255, 0.05), /* Very light cyan line */
+                rgba(0, 191, 255, 0.05) 1px,
+                transparent 2px,
+                transparent 20px
+            );
+            background-size: 50px 50px;
+            opacity: 0.1; 
+            animation: flow-noise 300s linear infinite; /* Extremely slow movement */
+        }
+        
+        @keyframes flow-noise {
+            from { background-position: 0 0; }
+            to { background-position: 5000px 5000px; }
+        }
+
+
+        /* Custom button styling (Matrix Themed) */
+        .btn-base {
+            padding: 1rem 2.5rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+        }
+        
+        .btn-red {
+            background-color: var(--matrix-red);
+            border: 1px solid var(--matrix-red);
+        }
+        .btn-red:hover {
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
+            transform: scale(1.02);
+        }
+        
+        .btn-cyan {
+            background-color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+            color: var(--bg-dark); /* Dark text for contrast */
+        }
+        .btn-cyan:hover {
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
+            transform: scale(1.02);
+        }
+
+        /* Utility for centering main content */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Styling for the Minimalist Workflow Section */
+        .timeline-item {
+            position: relative;
+            margin-bottom: 4rem;
+            padding-left: 3.5rem;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 18px;
+            height: 18px;
+            background-color: var(--accent-cyan);
+            border: 4px solid var(--bg-dark);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--accent-cyan);
+        }
+        /* Style for clickable title */
+        .workflow-title {
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex; /* Enable flex for better SVG alignment */
+            align-items: center;
+        }
+        .workflow-title:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* --- SVG Handwriting Animation Styles --- */
+        .workflow-svg-container {
+            display: inline-block;
+            vertical-align: middle;
+            width: 60px; /* Consistent width for 01, 02, 03 */
+            height: 40px; /* Height for numbers */
+            margin-right: 1rem;
+        }
+        
+        .workflow-svg-container svg {
+            fill: none;
+            stroke: var(--accent-cyan);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.8;
+        }
+        
+        /* Base state: Stroke is hidden (dashoffset equals dasharray length, set by JS) */
+        .workflow-svg-container path {
+            stroke-dasharray: 0; /* Initial value to be overridden by JS */
+            stroke-dashoffset: 0; /* Initial value to be overridden by JS */
+            transition: stroke-dashoffset 2s cubic-bezier(0.65, 0.05, 0.36, 1); /* Custom easing for a sophisticated drawing effect */
+        }
+        
+        /* Animated state: Stroke is drawn (dashoffset is 0) */
+        .timeline-item.is-visible .workflow-svg-container path {
+            stroke-dashoffset: 0 !important; /* !important needed to override inline style set by JS */
+        }
+
+    </style>
+    <!-- Firebase Initialization Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // IMPORTANT: Use the global variables provided by the environment
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        let db, auth, userId;
+        setLogLevel('Debug');
+
+        async function initFirebase() {
+            if (!firebaseConfig) {
+                console.error("Firebase configuration is missing.");
+                return;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Authentication logic
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Firebase Auth Error:", error);
+            }
+
+            // Authentication listener (kept for internal userId tracking if needed for future features)
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    console.log("Authenticated User ID:", userId);
+                } else {
+                    console.log("User is signed out or anonymous.");
+                }
+            });
+        }
+
+        initFirebase();
+    </script>
+</head>
+<body class="font-inter">
+    <!-- Futuristic Brain/Data Connection Background -->
+    <div class="matrix-bg"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full bg-black bg-opacity-90 backdrop-blur-md z-50 shadow-2xl border-b border-gray-800">
+        <div class="main-container flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-3">
+                <!-- User-Provided Logo (Updated SRC) -->
+                <img src="uploaded:2.png-b087f335-9a2b-4cf6-ae33-42ac69024590" onerror="this.onerror=null; this.src='https://placehold.co/40x40/1A1A1A/FFFFFF?text=Logo';" alt="HumindAI Logo" class="h-8 w-8 rounded-xl ring-2 ring-[var(--accent-cyan)]">
+                <span class="text-3xl font-poppins font-black text-white tracking-wider">HUMINDAI</span>
+            </div>
+            <!-- Updated Navigation Links -->
+            <div class="hidden md:flex space-x-8 text-sm font-semibold text-[var(--text-secondary)]">
+                <a href="#" class="hover:text-[var(--accent-cyan)] transition">HOME</a>
+                <a href="#solutions" class="hover:text-[var(--accent-cyan)] transition">SERVICES</a>
+                <a href="#contact" class="hover:text-[var(--accent-cyan)] transition">CONNECT</a>
+            </div>
+            <!-- Removed UID display -->
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 py-24 sm:py-32">
+        <div class="main-container text-center">
+            <!-- Professional Header -->
+            <h1 class="text-5xl sm:text-7xl lg:text-8xl font-poppins font-black tracking-tighter text-white mb-6 leading-none">
+                <span class="text-[var(--accent-cyan)]">Intelligence</span> Engineered.
+            </h1>
+            <h2 class="text-5xl sm:text-7xl lg:text-8xl font-poppins font-black tracking-tighter text-white mb-10 leading-none">
+                <span class="text-white">Automation</span> Refined.
+            </h2>
+            
+            <!-- Professional Body Text -->
+            <p class="text-xl sm:text-2xl text-[var(--text-secondary)] mb-12 max-w-4xl mx-auto font-inter">
+                We craft **human-centric AI workflows** that transform complex operations into clear, cost-saving results. Trust the data, empower your team.
+            </p>
+
+            <!-- Centered Matrix-Themed Buttons (Red Pill / Blue Pill) -->
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+                <!-- Blue Pill - Explore (Left) -->
+                <button id="explore-btn" class="btn-base btn-cyan text-base sm:text-lg">
+                    Explore Our Methodology
+                </button>
+                <!-- Red Pill - Start (Right) -->
+                <button id="start-btn" class="btn-base btn-red text-base sm:text-lg text-white" onclick="openFormModal()">
+                    Start AI Assessment
+                </button>
+            </div>
+
+        </div>
+    </main>
+    
+    <!-- 2. SERVICES/METRICS MODULE (Reverting to original key stats) -->
+    <section class="relative z-10 py-24 bg-gray-900 bg-opacity-30 border-t border-b border-gray-800" id="solutions">
+        <div class="main-container">
+            <h3 class="text-4xl font-poppins font-bold text-center mb-16 text-white">
+                Quantifiable Impact. Verified Results.
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+                <!-- Metric 1: Cost Reduction -->
+                <div class="p-8 rounded-xl border border-[var(--accent-cyan)] shadow-xl bg-black/40 hover:bg-black/60 transition duration-300">
+                    <p class="text-6xl sm:text-7xl font-poppins font-black mb-3 text-[var(--matrix-red)]">
+                        40%
+                    </p>
+                    <h4 class="text-xl font-poppins font-semibold text-white">Cost Reduction</h4>
+                    <p class="text-[var(--text-secondary)] mt-2">Average savings by eliminating manual, repetitive human labor.</p>
+                </div>
+                <!-- Metric 2: Faster Workflows -->
+                <div class="p-8 rounded-xl border border-[var(--accent-cyan)] shadow-xl bg-black/40 hover:bg-black/60 transition duration-300">
+                    <p class="text-6xl sm:text-7xl font-poppins font-black mb-3 text-[var(--accent-cyan)]">
+                        3x
+                    </p>
+                    <h4 class="text-xl font-poppins font-semibold text-white">Faster Workflows</h4>
+                    <p class="text-[var(--text-secondary)] mt-2">Acceleration of core business processes through intelligent automation.</p>
+                </div>
+                <!-- Metric 3: Processes Optimized -->
+                <div class="p-8 rounded-xl border border-[var(--accent-cyan)] shadow-xl bg-black/40 hover:bg-black/60 transition duration-300">
+                    <p class="text-6xl sm:text-7xl font-poppins font-black mb-3 text-[var(--matrix-red)]">
+                        500+
+                    </p>
+                    <h4 class="text-xl font-poppins font-semibold text-white">Processes Optimized</h4>
+                    <p class="text-[var(--text-secondary)] mt-2">Total operational functions refined and deployed across our client base.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. INTERACTIVE WORKFLOW MODULE (Minimalist Timeline with Scroll Animation) -->
+    <section class="relative z-10 py-24" id="workflows">
+        <div class="main-container max-w-4xl">
+            <div class="text-center mb-16">
+                <p class="text-lg font-semibold text-[var(--accent-cyan)]">THE HUMINDAI METHODOLOGY</p>
+                <h3 class="text-5xl font-poppins font-black text-white mt-2">Your Custom AI Journey</h3>
+            </div>
+
+            <div class="grid md:grid-cols-1 gap-8 items-start">
+                <div class="vertical-timeline">
+                    <!-- Step 1 (Added data-index for JS targeting) -->
+                    <div class="timeline-item" data-index="1">
+                        <span class="timeline-dot"></span>
+                        <h4 class="text-3xl font-poppins font-bold leading-tight text-white workflow-title"
+                            onclick="openDefinitionModal('01 DISCOVERY & DESIGN', 'Deep operational analysis to map custom AI workflows and define clear ROI metrics. We partner with your team to identify high-impact automation opportunities and outline the project\'s scope and success criteria.')">
+                            <!-- SVG for 01 will be injected here by JS -->
+                            DISCOVERY & DESIGN
+                        </h4>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="timeline-item" data-index="2">
+                        <span class="timeline-dot"></span>
+                        <h4 class="text-3xl font-poppins font-bold leading-tight text-white workflow-title"
+                            onclick="openDefinitionModal('02 MODEL DEVELOPMENT & VALIDATION', 'Rapid prototyping and iterative testing of the AI models. Rigorous validation ensures compliance, accuracy, and scalability across all operational environments, minimizing integration risk.')">
+                            <!-- SVG for 02 will be injected here by JS -->
+                            MODEL DEVELOPMENT & VALIDATION
+                        </h4>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="timeline-item" data-index="3">
+                        <span class="timeline-dot"></span>
+                        <h4 class="text-3xl font-poppins font-bold leading-tight text-white workflow-title"
+                            onclick="openDefinitionModal('03 DEPLOYMENT & INTEGRATION', 'Seamless integration into your existing CRM, database, or communication channel. Real-time monitoring for immediate impact, followed by comprehensive training and support for your internal teams.')">
+                            <!-- SVG for 03 will be injected here by JS -->
+                            DEPLOYMENT & INTEGRATION
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. FINAL CTA BLOCK -->
+    <section class="relative z-10 py-32 bg-black/40 border-t border-gray-800" id="contact">
+        <div class="main-container max-w-4xl text-center">
+            <h3 class="text-5xl font-poppins font-black tracking-tight text-white leading-tight">
+                Ready to stop managing complexity and <span class="text-[var(--accent-cyan)]">start creating value</span>?
+            </h3>
+            <p class="mt-6 text-xl text-[var(--text-secondary)]">
+                Schedule a concise, high-level assessment with our solution architects today.
+            </p>
+
+            <!-- Final CTA Button: Red and Cyan Gradient -->
+            <button onclick="openFormModal()" class="mt-12 px-12 py-5 text-xl font-bold rounded-full text-white btn-base" 
+                    style="background-image: linear-gradient(90deg, var(--matrix-red) 0%, var(--accent-cyan) 100%); box-shadow: 0 8px 30px -5px rgba(0, 191, 255, 0.4), 0 8px 30px -5px rgba(220, 38, 38, 0.4);">
+                Initiate Assessment Protocol
+            </button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-black py-12 border-t border-gray-900">
+        <div class="main-container text-sm text-[var(--text-secondary)]">
+            <div class="md:flex md:justify-between md:items-center">
+                <p>&copy; 2025 HumindAI. All rights reserved. | <span class="text-[var(--accent-cyan)]">Intelligence Refined.</span></p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-[var(--accent-cyan)] transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-[var(--accent-cyan)] transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 1. Definition Modal (For Workflow Steps) -->
+    <div id="definition-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/90 z-[100] justify-center items-center p-4">
+        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl max-w-lg w-full border-t-4 border-l-4" style="border-color: var(--accent-cyan);">
+            <div class="flex justify-between items-center mb-4">
+                <h4 id="modal-title" class="text-2xl font-poppins font-bold text-white"></h4>
+                <button onclick="closeDefinitionModal()" class="text-gray-500 hover:text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p id="modal-content" class="text-lg text-[var(--text-light)]"></p>
+            <button onclick="closeDefinitionModal()" class="mt-6 px-6 py-2 text-sm font-semibold rounded-full text-white float-right btn-cyan" style="color: var(--bg-dark);">
+                Acknowledge
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Customer Detail Form Modal -->
+    <div id="form-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/90 z-[100] justify-center items-center p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-6">
+                <h4 class="text-3xl font-poppins font-extrabold text-gray-900">Initiate AI Assessment</h4>
+                <button onclick="closeFormModal()" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <form id="inquiry-form" onsubmit="event.preventDefault(); showFormSuccess();">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <label class="block">
+                        <span class="text-sm font-medium text-gray-700">Name *</span>
+                        <input type="text" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[var(--accent-cyan)] focus:border-[var(--accent-cyan)]">
+                    </label>
+                    <label class="block">
+                        <span class="text-sm font-medium text-gray-700">Work Email *</span>
+                        <input type="email" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[var(--accent-cyan)] focus:border-[var(--accent-cyan)]">
+                    </label>
+                </div>
+                
+                <label class="block mb-4">
+                    <span class="text-sm font-medium text-gray-700">Company Name *</span>
+                    <input type="text" required class="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[var(--accent-cyan)] focus:border-[var(--accent-cyan)]">
+                </label>
+                
+                <div class="mb-6">
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Describe your core automation challenge *</label>
+                    <textarea id="message" rows="4" required placeholder="e.g., We spend 40 hours/week manually processing invoices..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[var(--accent-cyan)] focus:border-[var(--accent-cyan)]"></textarea>
+                </div>
+
+                <button type="submit" class="w-full px-6 py-3 text-lg font-bold rounded-full text-white btn-base" style="background-color: var(--matrix-red);">
+                    Submit Data Stream
+                </button>
+            </form>
+            <div id="form-success-message" class="hidden mt-6 text-white font-semibold p-4 border rounded-lg text-center" style="background-color: var(--accent-cyan); border-color: var(--accent-cyan); color: var(--bg-dark);">
+                Success. Data stream received. A Human Mind AI analyst will connect with you shortly.
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Modal Functions ---
+        const formModal = document.getElementById('form-modal');
+        const inquiryForm = document.getElementById('inquiry-form');
+        const formSuccess = document.getElementById('form-success-message');
+        const definitionModal = document.getElementById('definition-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+
+        function openFormModal() {
+            inquiryForm.style.display = 'block';
+            formSuccess.classList.add('hidden');
+            formModal.style.display = 'flex';
+        }
+
+        function closeFormModal() {
+            formModal.style.display = 'none';
+            inquiryForm.reset();
+        }
+
+        function showFormSuccess() {
+            inquiryForm.style.display = 'none';
+            formSuccess.classList.remove('hidden');
+            
+            setTimeout(() => {
+                closeFormModal();
+            }, 3000); 
+        }
+
+        function openDefinitionModal(title, content) {
+            modalTitle.textContent = title;
+            modalContent.textContent = content;
+            definitionModal.style.display = 'flex';
+        }
+
+        function closeDefinitionModal() {
+            definitionModal.style.display = 'none';
+        }
+        
+        // --- Click Handlers ---
+        document.getElementById('explore-btn').addEventListener('click', () => {
+             document.getElementById('workflows').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // --- SCROLL ANIMATION LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const svgTemplates = {
+                // Simplified SVG paths for the numbers '0', '1', '2', '3' to create the writing effect
+                '01': `<svg viewBox="0 0 60 40" class="w-full h-full">
+                    <path d="M12 20 A 10 15 0 1 1 25 20 A 10 15 0 1 1 12 20 M38 5 L 38 35" />
+                </svg>`,
+                '02': `<svg viewBox="0 0 60 40" class="w-full h-full">
+                    <path d="M12 20 A 10 15 0 1 1 25 20 A 10 15 0 1 1 12 20 M38 10 L 48 10 C 53 10 53 20 48 20 L 38 20 L 38 35" />
+                </svg>`,
+                '03': `<svg viewBox="0 0 60 40" class="w-full h-full">
+                    <path d="M12 20 A 10 15 0 1 1 25 20 A 10 15 0 1 1 12 20 M38 10 L 48 10 C 53 10 53 20 48 20 C 53 20 53 30 48 30 L 38 30" />
+                </svg>`,
+            };
+
+            const workflowItems = document.querySelectorAll('.timeline-item');
+
+            // Function to calculate path length and set initial dash properties (hiding the stroke)
+            function initializeSVG(svgElement) {
+                const path = svgElement.querySelector('path');
+                if (path) {
+                    // Get the total length of the path. This must be done after the SVG is in the DOM.
+                    const length = path.getTotalLength();
+                    // Set dasharray and offset equal to the length to hide the stroke
+                    path.style.strokeDasharray = length;
+                    path.style.strokeDashoffset = length;
+                }
+            }
+
+            // Intersection Observer setup
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const item = entry.target;
+                        // Add the animation class which triggers the CSS transition (stroke-dashoffset to 0)
+                        item.classList.add('is-visible'); 
+                        // Stop observing this item so the animation doesn't repeat
+                        observer.unobserve(item); 
+                    }
+                });
+            }, {
+                root: null, // use the viewport
+                rootMargin: '0px',
+                threshold: 0.5 // trigger when 50% of the item is visible
+            });
+
+            workflowItems.forEach(item => {
+                const index = item.getAttribute('data-index');
+                const key = '0' + index;
+                
+                // 1. Inject the SVG into the H4 element
+                const numberH4 = item.querySelector('.workflow-title');
+                if (numberH4) {
+                    const svgWrapper = document.createElement('span');
+                    svgWrapper.className = 'workflow-svg-container';
+                    svgWrapper.innerHTML = svgTemplates[key];
+                    numberH4.prepend(svgWrapper);
+
+                    // 2. Initialize the SVG path lengths (must be done after injection)
+                    const svgElement = svgWrapper.querySelector('svg');
+                    if (svgElement) {
+                        initializeSVG(svgElement);
+                    }
+                }
+                
+                // 3. Start observing the element
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>
